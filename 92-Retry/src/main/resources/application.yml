@@ -1,0 +1,17 @@
+server:
+  port: 6003
+
+resilience4j:
+  retry:
+    instances:
+      rr:
+        max-attempts: 3
+        wait-duration: 10s
+  ratelimiter:
+    instances:
+      rr:
+        register-health-indicator: false #for heath endpoint of actuator
+        limit-for-period: 10 #total number of request allowed
+        limit-refresh-period: 10s #within this amount of time
+        timeout-duration: 3s 
+#when number of request exids, wait for this amount of time to allow new requests 

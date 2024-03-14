@@ -1,0 +1,36 @@
+server:
+  port: 6001
+  
+
+#let Actuators work for circuit breaker as well
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+#Exposing endpoints
+  endpoints:
+    web:
+      exposure:
+        include:
+        - health
+  endpoint:
+    health:
+      show-details: always
+
+#circuitbreaker configuration
+resilience4j:
+  circuitbreaker:
+    instances: #add all instances which you have created by there names
+      breaker: #this is the instance name which we have created in rest controller
+        register-health-indicator: true #let the health endpoint work here
+        event-consumer-buffer-size: 10 #How many event we should be consuming ???
+        failure-rate-threshold: 50 #circuit breaker will change its status(open,close,half-open)when failor/success rate is 50%
+        minimum-number-of-calls: 5 #minimum call before it changes from close to open
+        automatic-transition-from-open-to-half-open-enabled: true #autometically change it's status from open to half-open
+        wait-duration-in-open-state: 5s #stay for 5 second in open state before checking again and trying to change the status
+        permitted-number-of-calls-in-half-open-state: 3 #3 calls are alloud in half-open state to check down application
+        #if down application is now up, go to close state and if still down, go to open state again
+        sliding-window-size: 10 #count 10 ???
+        sliding-window-type: count-based 
+        #2 different ways for sliding window, count based and time based.
+        
